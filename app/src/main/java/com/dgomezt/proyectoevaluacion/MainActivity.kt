@@ -7,9 +7,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dgomezt.proyectoevaluacion.data.FootballService
 import com.dgomezt.proyectoevaluacion.data.ResponseOf
-import com.dgomezt.proyectoevaluacion.data.league.ResponseLeague
 import com.dgomezt.proyectoevaluacion.data.team.ResponseTeam
-import com.dgomezt.proyectoevaluacion.recycleview.adapters.LeagueAdapter
+import com.dgomezt.proyectoevaluacion.recycleview.adapters.TeamAdapter
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Call
@@ -21,8 +20,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 class MainActivity() : AppCompatActivity() {
     private lateinit var _service: FootballService
 
-    private var _responsesLeague = ArrayList<ResponseLeague>()
-    private lateinit var _leagueAdapter : LeagueAdapter
+    private var _responsesTeam = ArrayList<ResponseTeam>()
+    private lateinit var _teamAdapter : TeamAdapter
+
+    private val SEASON = 2022
+    private val LEAGUE = 140
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,30 +58,30 @@ class MainActivity() : AppCompatActivity() {
         _service = retrofit.create(FootballService::class.java)
 
 
-        var recyclerView = findViewById<RecyclerView>(R.id.leagues_recycler_view)
+        var recyclerView = findViewById<RecyclerView>(R.id.teams_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        _leagueAdapter =  LeagueAdapter(_responsesLeague)
-        recyclerView.adapter = _leagueAdapter
+        _teamAdapter =  TeamAdapter(_responsesTeam)
+        recyclerView.adapter = _teamAdapter
 
         loadLeagues()
     }
 
     private fun loadLeagues() {
-        var call = _service.getAllLeagues("league", "2022")
-        call.enqueue(object : Callback<ResponseOf<ResponseLeague>> {
+        var call = _service.getTeams(LEAGUE,SEASON)
+        call.enqueue(object : Callback<ResponseOf<ResponseTeam>> {
             override fun onResponse(
-                call: Call<ResponseOf<ResponseLeague>>,
-                response: Response<ResponseOf<ResponseLeague>>
+                call: Call<ResponseOf<ResponseTeam>>,
+                response: Response<ResponseOf<ResponseTeam>>
             ) {
                 if (response.isSuccessful){
                     var responses  = response.body()!!.response
-                    _responsesLeague.addAll(responses)
-                    _leagueAdapter.notifyItemInserted(0)
+                    _responsesTeam.addAll(responses)
+                    _teamAdapter.notifyItemRangeInserted(0, 20)
                 }
             }
 
-            override fun onFailure(call: Call<ResponseOf<ResponseLeague>>, t: Throwable) {
-                Log.i(MainActivity::class.java.name, "ERROOOOOR")
+            override fun onFailure(call: Call<ResponseOf<ResponseTeam>>, t: Throwable) {
+                Log.i(MainActivity::class.java.name, t.localizedMessage)
             }
         })
     }

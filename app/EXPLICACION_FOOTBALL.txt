@@ -1,0 +1,14 @@
+SEASON 2022
+LEAGUE Liga Santander  id=140
+PLAYER ¿?
+
+La aplicacion se basara en obtener informacion de los diferentes equipos que participan en la Liga Santander
+en la temporada 2022. Usaremos la paginación para coger los jugadores.
+
+1º Mostrara una lista en forma de cuadricula de todos los equipos de la Liga Santader para la temporada 2022.
+
+Metodo get("teams") pasando como query el league = 140 y season = 2022
+
+2º Cuando seleccionemos un equipo mostrara los jugadores (usamos paginacion)
+
+Metodo get("players") pasando como query season=2022, team=(numeroID), league=140
