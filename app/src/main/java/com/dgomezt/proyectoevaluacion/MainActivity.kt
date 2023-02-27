@@ -3,6 +3,7 @@ package com.dgomezt.proyectoevaluacion
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dgomezt.proyectoevaluacion.data.FootballService
@@ -22,6 +23,8 @@ class MainActivity() : AppCompatActivity() {
 
     private var _responsesTeam = ArrayList<ResponseTeam>()
     private lateinit var _teamAdapter : TeamAdapter
+
+    private val COLUMNS = 3
 
     private val SEASON = 2022
     private val LEAGUE = 140
@@ -59,7 +62,7 @@ class MainActivity() : AppCompatActivity() {
 
 
         var recyclerView = findViewById<RecyclerView>(R.id.teams_recycler_view)
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = GridLayoutManager(this, COLUMNS)
         _teamAdapter =  TeamAdapter(_responsesTeam)
         recyclerView.adapter = _teamAdapter
 
