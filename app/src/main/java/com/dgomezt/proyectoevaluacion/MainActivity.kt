@@ -1,15 +1,16 @@
 package com.dgomezt.proyectoevaluacion
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dgomezt.proyectoevaluacion.data.FootballService
-import com.dgomezt.proyectoevaluacion.data.ResponseOf
+import com.dgomezt.proyectoevaluacion.data.response.ResponseOf
 import com.dgomezt.proyectoevaluacion.data.team.ResponseTeam
 import com.dgomezt.proyectoevaluacion.recycleview.adapters.TeamAdapter
+import com.dgomezt.proyectoevaluacion.recycleview.adapters.TeamAdapter.OnTeamsClickListener
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Call
@@ -24,10 +25,13 @@ class MainActivity() : AppCompatActivity() {
     private var _responsesTeam = ArrayList<ResponseTeam>()
     private lateinit var _teamAdapter : TeamAdapter
 
-    private val COLUMNS = 3
 
-    private val SEASON = 2022
-    private val LEAGUE = 140
+    companion object {
+        const val SEASON = 2022
+        const val LEAGUE = 140
+        private const val COLUMNS = 3
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,14 +67,23 @@ class MainActivity() : AppCompatActivity() {
 
         var recyclerView = findViewById<RecyclerView>(R.id.teams_recycler_view)
         recyclerView.layoutManager = GridLayoutManager(this, COLUMNS)
-        _teamAdapter =  TeamAdapter(_responsesTeam)
+
+        _teamAdapter =  TeamAdapter(_responsesTeam, object : OnTeamsClickListener {
+            override fun onTeamsClick(responseTeam: ResponseTeam) {
+                var intent = Intent()
+                intent.setClass(this@MainActivity,PlayerDetailsActivity::class.java)
+                intent.putExtra(PlayerDetailsActivity.TEAM_KEY, responseTeam.team.id.toString());
+                startActivity(intent);
+            }
+        })
+
         recyclerView.adapter = _teamAdapter
 
-        loadLeagues()
+        loadTeams()
     }
 
-    private fun loadLeagues() {
-        var call = _service.getTeams(LEAGUE,SEASON)
+    private fun loadTeams() {
+        var call = _service.getTeams(LEAGUE, Companion.SEASON)
         call.enqueue(object : Callback<ResponseOf<ResponseTeam>> {
             override fun onResponse(
                 call: Call<ResponseOf<ResponseTeam>>,
@@ -79,7 +92,7 @@ class MainActivity() : AppCompatActivity() {
                 if (response.isSuccessful){
                     var responses  = response.body()!!.response
                     _responsesTeam.addAll(responses)
-                    _teamAdapter.notifyItemRangeInserted(0, 20)
+                    _teamAdapter.notifyItemRangeInserted(0, _responsesTeam.size)
                 }
             }
 
@@ -88,4 +101,5 @@ class MainActivity() : AppCompatActivity() {
             }
         })
     }
+
 }

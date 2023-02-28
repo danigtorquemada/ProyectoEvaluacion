@@ -7,12 +7,17 @@ import com.dgomezt.proyectoevaluacion.R
 import com.dgomezt.proyectoevaluacion.data.team.ResponseTeam
 import com.dgomezt.proyectoevaluacion.recycleview.viewholders.TeamViewHolder
 
-class TeamAdapter(private val _responsesTeam: List<ResponseTeam>) :
+class TeamAdapter(private val _responsesTeam: List<ResponseTeam>, private val _onTeamsClickListener : OnTeamsClickListener) :
     RecyclerView.Adapter<TeamViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TeamViewHolder {
-        var view = LayoutInflater.from(parent.context).inflate(R.layout.team_row, parent, false)
 
-        return TeamViewHolder(view)
+    interface OnTeamsClickListener {
+        fun onTeamsClick(responseTeam: ResponseTeam)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TeamViewHolder {
+        var view = LayoutInflater.from(parent.context).inflate(R.layout.team_element, parent, false)
+
+        return TeamViewHolder(view, _onTeamsClickListener)
     }
 
     override fun getItemCount(): Int {
