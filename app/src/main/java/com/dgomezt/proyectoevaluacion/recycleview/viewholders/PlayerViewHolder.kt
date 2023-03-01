@@ -21,9 +21,9 @@ class PlayerViewHolder(itemView: View) : ViewHolder(itemView) {
         _secondNameTextView.text = responsePlayer.player.lastname
         _nationalityTextView.text = responsePlayer.player.nationality
 
-        Picasso.get().load(responsePlayer.player.photo.toString())
+        Picasso.get().load(responsePlayer.player.photo.toString()).resize(250,250)
             .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
             .networkPolicy(NetworkPolicy.NO_CACHE)
-            .into(_imageView);
+            .into(_imageView)
     }
 }

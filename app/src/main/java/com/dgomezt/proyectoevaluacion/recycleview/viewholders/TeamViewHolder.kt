@@ -31,7 +31,7 @@ class TeamViewHolder : RecyclerView.ViewHolder {
         _responseTeam = responseTeam
         _nameTextView.text = responseTeam.team.name
 
-        Picasso.get().load(responseTeam.team.logo.toString())
+        Picasso.get().load(responseTeam.team.logo.toString()).resize(250,250)
             .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
             .networkPolicy(NetworkPolicy.NO_CACHE)
             .into(_imageView)
