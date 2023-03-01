@@ -3,6 +3,9 @@ package com.dgomezt.proyectoevaluacion
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.view.View.OnClickListener
+import android.widget.Button
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dgomezt.proyectoevaluacion.data.FootballService
@@ -24,6 +27,11 @@ class PlayerDetailsActivity : AppCompatActivity() {
     private lateinit var _playerAdapter : PlayerAdapter
 
     private var _responsePlayer = ArrayList<ResponsePlayer>()
+
+    private var _offset = 0
+
+    private var page = 1
+    private lateinit var loadMoreButton: Button
 
     companion object {
         const val TEAM_KEY : String = "TEAM"
@@ -68,10 +76,17 @@ class PlayerDetailsActivity : AppCompatActivity() {
         if (team != null) {
             loadPlayers(team)
         }
+
+        loadMoreButton = findViewById(R.id.load_more_button)
+        loadMoreButton.setOnClickListener {
+            if (team != null){
+                loadPlayers(team)
+            }
+        }
     }
 
     private fun loadPlayers(_team : String) {
-        var call = _service.getPlayersByTeam(MainActivity.LEAGUE,MainActivity.SEASON, _team, 1)
+        var call = _service.getPlayersByTeam(MainActivity.LEAGUE,MainActivity.SEASON, _team, page)
         call.enqueue(object : Callback<ResponseOf<ResponsePlayer>> {
             override fun onResponse(
                 call: Call<ResponseOf<ResponsePlayer>>,
@@ -80,7 +95,11 @@ class PlayerDetailsActivity : AppCompatActivity() {
                 if (response.isSuccessful){
                     var responses  = response.body()!!.response
                     _responsePlayer.addAll(responses)
-                    _playerAdapter.notifyItemRangeInserted(0, _responsePlayer.size)
+                    _playerAdapter.notifyItemRangeInserted(_offset, responses.size)
+                    _offset += responses.size
+
+                    if(++page > response.body()!!.paging.total)
+                        loadMoreButton.isEnabled = false
                 }
             }
 

@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">ProyectoEvaluacion</string>
+    <string name="app_name">Evaluation Project</string>
+    <string name="description_image_player">Player´s image</string>
+    <string name="title_text_view">Santander´s League T/2023</string>
+    <string name="more_button_text">MORE</string>
+    <string name="team_image_description">Team´s image</string>
 </resources>
