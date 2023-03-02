@@ -8,6 +8,7 @@ import android.view.View.OnClickListener
 import android.widget.Button
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.dgomezt.proyectoevaluacion.data.FootballService
 import com.dgomezt.proyectoevaluacion.data.player.ResponsePlayer
 import com.dgomezt.proyectoevaluacion.data.response.ResponseOf
@@ -31,6 +32,8 @@ class PlayerDetailsActivity : AppCompatActivity() {
     private var _offset = 0
 
     private var page = 1
+    private var moreElements = true
+
     private lateinit var loadMoreButton: Button
 
     companion object {
@@ -67,7 +70,22 @@ class PlayerDetailsActivity : AppCompatActivity() {
 
 
         var recyclerView = findViewById<RecyclerView>(R.id.players_recycler_view)
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        var layoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = layoutManager
+
+        recyclerView.addOnScrollListener(object : OnScrollListener(){
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val visibleItemCount: Int = layoutManager!!.childCount
+                val totalItemCount: Int = layoutManager!!.itemCount
+                val firstVisibleItemPosition: Int = layoutManager.findFirstVisibleItemPosition()
+                if (moreElements) {
+                    if (team != null) {
+                        loadPlayers(team)
+                    }
+                }
+            }
+        })
 
         _playerAdapter =  PlayerAdapter(_responsePlayer)
 
@@ -98,8 +116,10 @@ class PlayerDetailsActivity : AppCompatActivity() {
                     _playerAdapter.notifyItemRangeInserted(_offset, responses.size)
                     _offset += responses.size
 
-                    if(++page > response.body()!!.paging.total)
+                    if(++page > response.body()!!.paging.total){
                         loadMoreButton.isEnabled = false
+                        moreElements = false
+                    }
                 }
             }
 
