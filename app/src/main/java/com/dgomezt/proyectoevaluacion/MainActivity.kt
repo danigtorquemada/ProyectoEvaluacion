@@ -1,9 +1,13 @@
 package com.dgomezt.proyectoevaluacion
 
+import android.animation.ObjectAnimator
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.view.animation.AnticipateInterpolator
+import androidx.core.animation.doOnEnd
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dgomezt.proyectoevaluacion.data.FootballService
@@ -36,6 +40,8 @@ class MainActivity() : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        splashConfig()
 
         /*     Para poder meter la API Key en la cabecera de todas las peticiones
         Si quisieramos poner solamente en una peticion podriamos usar la anotacion @Header
@@ -80,6 +86,26 @@ class MainActivity() : AppCompatActivity() {
         recyclerView.adapter = _teamAdapter
 
         loadTeams()
+    }
+
+    private fun splashConfig() {
+        splashScreen.setOnExitAnimationListener { splashScreenView ->
+            // Create your custom animation.
+            val slideUp = ObjectAnimator.ofFloat(
+                splashScreenView,
+                View.TRANSLATION_X,
+                0f,
+                -splashScreenView.width.toFloat()
+            )
+            slideUp.interpolator = AnticipateInterpolator()
+            slideUp.duration = 2000L
+
+            // Call SplashScreenView.remove at the end of your custom animation.
+            slideUp.doOnEnd { splashScreenView.remove() }
+
+            // Run your animation.
+            slideUp.start()
+        }
     }
 
     private fun loadTeams() {
