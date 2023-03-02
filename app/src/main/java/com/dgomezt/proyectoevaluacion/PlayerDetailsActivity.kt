@@ -80,8 +80,12 @@ class PlayerDetailsActivity : AppCompatActivity() {
                 val totalItemCount: Int = layoutManager!!.itemCount
                 val firstVisibleItemPosition: Int = layoutManager.findFirstVisibleItemPosition()
                 if (moreElements) {
-                    if (team != null) {
-                        loadPlayers(team)
+                    if (visibleItemCount + firstVisibleItemPosition >= totalItemCount
+                        && firstVisibleItemPosition >= 0
+                    ){
+                        if (team != null) {
+                            loadPlayers(team)
+                        }
                     }
                 }
             }
