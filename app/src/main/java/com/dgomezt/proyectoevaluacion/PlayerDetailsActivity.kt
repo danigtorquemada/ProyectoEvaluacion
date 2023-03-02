@@ -33,8 +33,7 @@ class PlayerDetailsActivity : AppCompatActivity() {
 
     private var page = 1
     private var moreElements = true
-
-    private lateinit var loadMoreButton: Button
+    private var isLoading = false
 
     companion object {
         const val TEAM_KEY : String = "TEAM"
@@ -79,12 +78,13 @@ class PlayerDetailsActivity : AppCompatActivity() {
                 val visibleItemCount: Int = layoutManager!!.childCount
                 val totalItemCount: Int = layoutManager!!.itemCount
                 val firstVisibleItemPosition: Int = layoutManager.findFirstVisibleItemPosition()
-                if (moreElements) {
+                if (moreElements && !isLoading) {
                     if (visibleItemCount + firstVisibleItemPosition >= totalItemCount
                         && firstVisibleItemPosition >= 0
                     ){
                         if (team != null) {
                             loadPlayers(team)
+                            isLoading = true
                         }
                     }
                 }
@@ -97,13 +97,6 @@ class PlayerDetailsActivity : AppCompatActivity() {
 
         if (team != null) {
             loadPlayers(team)
-        }
-
-        loadMoreButton = findViewById(R.id.load_more_button)
-        loadMoreButton.setOnClickListener {
-            if (team != null){
-                loadPlayers(team)
-            }
         }
     }
 
@@ -121,9 +114,10 @@ class PlayerDetailsActivity : AppCompatActivity() {
                     _offset += responses.size
 
                     if(++page > response.body()!!.paging.total){
-                        loadMoreButton.isEnabled = false
                         moreElements = false
                     }
+
+                    isLoading = false
                 }
             }
 
