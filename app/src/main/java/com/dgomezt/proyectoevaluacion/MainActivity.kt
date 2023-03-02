@@ -23,7 +23,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class MainActivity() : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
     private lateinit var _service: FootballService
 
     private var _responsesTeam = ArrayList<ResponseTeam>()
@@ -48,7 +48,7 @@ class MainActivity() : AppCompatActivity() {
         Ejemplo:
         @Headers("X-RapidAPI-Key: e693df9d24msh804f774f3441c48p197f9fjsnb452a3614706",
         "X-RapidAPI-Host: api-football-beta.p.rapidapi.com")    */
-        var okHttpClient = OkHttpClient.Builder().apply {
+        val okHttpClient = OkHttpClient.Builder().apply {
             addInterceptor(
                 Interceptor { chain ->
                     val builder = chain.request().newBuilder()
@@ -71,15 +71,15 @@ class MainActivity() : AppCompatActivity() {
         _service = retrofit.create(FootballService::class.java)
 
 
-        var recyclerView = findViewById<RecyclerView>(R.id.teams_recycler_view)
+        val recyclerView = findViewById<RecyclerView>(R.id.teams_recycler_view)
         recyclerView.layoutManager = GridLayoutManager(this, COLUMNS)
 
         _teamAdapter =  TeamAdapter(_responsesTeam, object : OnTeamsClickListener {
             override fun onTeamsClick(responseTeam: ResponseTeam) {
-                var intent = Intent()
+                val intent = Intent()
                 intent.setClass(this@MainActivity,PlayerDetailsActivity::class.java)
-                intent.putExtra(PlayerDetailsActivity.TEAM_KEY, responseTeam.team.id.toString());
-                startActivity(intent);
+                intent.putExtra(PlayerDetailsActivity.TEAM_KEY, responseTeam.team.id.toString())
+                startActivity(intent)
             }
         })
 
@@ -109,21 +109,21 @@ class MainActivity() : AppCompatActivity() {
     }
 
     private fun loadTeams() {
-        var call = _service.getTeams(LEAGUE, Companion.SEASON)
+        val call = _service.getTeams(LEAGUE, SEASON)
         call.enqueue(object : Callback<ResponseOf<ResponseTeam>> {
             override fun onResponse(
                 call: Call<ResponseOf<ResponseTeam>>,
                 response: Response<ResponseOf<ResponseTeam>>
             ) {
                 if (response.isSuccessful){
-                    var responses  = response.body()!!.response
+                    val responses  = response.body()!!.response
                     _responsesTeam.addAll(responses)
                     _teamAdapter.notifyItemRangeInserted(0, _responsesTeam.size)
                 }
             }
 
             override fun onFailure(call: Call<ResponseOf<ResponseTeam>>, t: Throwable) {
-                Log.i(MainActivity::class.java.name, t.localizedMessage)
+                t.localizedMessage?.let { Log.i(MainActivity::class.java.name, it) }
             }
         })
     }
