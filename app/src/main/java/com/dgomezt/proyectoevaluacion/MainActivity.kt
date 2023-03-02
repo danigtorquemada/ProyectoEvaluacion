@@ -1,6 +1,8 @@
 package com.dgomezt.proyectoevaluacion
 
+import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -27,7 +29,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var _service: FootballService
 
     private var _responsesTeam = ArrayList<ResponseTeam>()
-    private lateinit var _teamAdapter : TeamAdapter
+    private lateinit var _teamAdapter: TeamAdapter
 
 
     companion object {
@@ -74,10 +76,10 @@ class MainActivity : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.teams_recycler_view)
         recyclerView.layoutManager = GridLayoutManager(this, COLUMNS)
 
-        _teamAdapter =  TeamAdapter(_responsesTeam, object : OnTeamsClickListener {
+        _teamAdapter = TeamAdapter(_responsesTeam, object : OnTeamsClickListener {
             override fun onTeamsClick(responseTeam: ResponseTeam) {
                 val intent = Intent()
-                intent.setClass(this@MainActivity,PlayerDetailsActivity::class.java)
+                intent.setClass(this@MainActivity, PlayerDetailsActivity::class.java)
                 intent.putExtra(PlayerDetailsActivity.TEAM_KEY, responseTeam.team.id.toString())
                 startActivity(intent)
             }
@@ -89,22 +91,47 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun splashConfig() {
-        splashScreen.setOnExitAnimationListener { splashScreenView ->
-            // Create your custom animation.
-            val slideUp = ObjectAnimator.ofFloat(
-                splashScreenView,
-                View.TRANSLATION_X,
-                0f,
-                -splashScreenView.width.toFloat()
-            )
-            slideUp.interpolator = AnticipateInterpolator()
-            slideUp.duration = 2000L
+        splashScreen.setOnExitAnimationListener { view ->
+            view.iconView?.let { icon ->
+                // set an animator that goes from height to 0, it will use AnticipateInterpolator set at the bottom of this code
+                val animator = ValueAnimator
+                    .ofInt(icon.height, 0)
+                    .setDuration(2000)
+                //update the icon height and width every time the animator value change
+                animator.addUpdateListener {
+                    val value = it.animatedValue as Int
+                    icon.layoutParams.width = value
+                    icon.layoutParams.height = value
+                    icon.requestLayout()
+                    if (value == 0) {
+                        view.remove()
+                    }
+                }
+                val animationSet = AnimatorSet()
+                animationSet.interpolator = AnticipateInterpolator()
+                // Default tension of AnticipateInterpolator is 2,
+                // this means that the animation will increase first the size of the icon a little bit and then decrease
+                animationSet.play(animator)
+                animationSet.start() // Launch the animation
+            }
+            /* ****** ANIMATION TRANSLATION SPLASH SCREEN ******** */
+            //splashScreenView ->
+            //// Create your custom animation.
+            //val slideUp = ObjectAnimator.ofFloat(
+            //    splashScreenView,
+            //    View.TRANSLATION_X,
+            //    0f,
+            //    -splashScreenView.width.toFloat()
+            //)
+            //slideUp.interpolator = AnticipateInterpolator()
+            //slideUp.duration = 2000L
 
-            // Call SplashScreenView.remove at the end of your custom animation.
-            slideUp.doOnEnd { splashScreenView.remove() }
+            //// Call SplashScreenView.remove at the end of your custom animation.
+            //slideUp.doOnEnd { splashScreenView.remove() }
 
-            // Run your animation.
-            slideUp.start()
+            //// Run your animation.
+            //slideUp.start()*/
+            /* ******************************************** */
         }
     }
 
@@ -115,8 +142,8 @@ class MainActivity : AppCompatActivity() {
                 call: Call<ResponseOf<ResponseTeam>>,
                 response: Response<ResponseOf<ResponseTeam>>
             ) {
-                if (response.isSuccessful){
-                    val responses  = response.body()!!.response
+                if (response.isSuccessful) {
+                    val responses = response.body()!!.response
                     _responsesTeam.addAll(responses)
                     _teamAdapter.notifyItemRangeInserted(0, _responsesTeam.size)
                 }
