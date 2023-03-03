@@ -10,7 +10,7 @@ import com.dgomezt.proyectoevaluacion.recycleview.viewholders.PlayerViewHolder
 class PlayerAdapter(private val _responsePlayer: List<ResponsePlayer>) :
     RecyclerView.Adapter<PlayerViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerViewHolder {
-        var view = LayoutInflater.from(parent.context).inflate(R.layout.player_row, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.player_row, parent, false)
 
         return PlayerViewHolder(view)
     }

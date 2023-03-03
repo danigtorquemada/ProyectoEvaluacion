@@ -1,15 +1,12 @@
 package com.dgomezt.proyectoevaluacion
 
 import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.view.animation.AnticipateInterpolator
-import androidx.core.animation.doOnEnd
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dgomezt.proyectoevaluacion.data.FootballService

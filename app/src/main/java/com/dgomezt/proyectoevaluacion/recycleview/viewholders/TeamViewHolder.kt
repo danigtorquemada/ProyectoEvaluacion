@@ -11,20 +11,20 @@ import com.squareup.picasso.MemoryPolicy
 import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 
-class TeamViewHolder : RecyclerView.ViewHolder {
+class TeamViewHolder(itemView: View, _onTeamsClickListener: TeamAdapter.OnTeamsClickListener) :
+    RecyclerView.ViewHolder(
+        itemView
+    ) {
 
     private val _nameTextView: TextView
     private val _imageView: ImageView
     private lateinit var _responseTeam:  ResponseTeam
 
-    constructor(itemView: View, _onTeamsClickListener: TeamAdapter.OnTeamsClickListener) : super(
-        itemView
-    ) {
-        this._nameTextView = itemView.findViewById<TextView>(R.id.team_name_text)
-        this._imageView = itemView.findViewById<ImageView>(R.id.team_image_view)
+    init {
+        this._nameTextView = itemView.findViewById(R.id.team_name_text)
+        this._imageView = itemView.findViewById(R.id.team_image_view)
         _imageView.setOnClickListener {
-            if (_responseTeam != null)
-                _onTeamsClickListener.onTeamsClick(_responseTeam)
+            _onTeamsClickListener.onTeamsClick(_responseTeam)
         }
     }
     fun bind(responseTeam: ResponseTeam){

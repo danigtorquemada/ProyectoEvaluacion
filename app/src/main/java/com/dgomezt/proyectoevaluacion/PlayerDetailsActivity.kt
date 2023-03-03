@@ -3,16 +3,12 @@ package com.dgomezt.proyectoevaluacion
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.view.View.OnClickListener
-import android.widget.Button
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.dgomezt.proyectoevaluacion.data.FootballService
 import com.dgomezt.proyectoevaluacion.data.player.ResponsePlayer
 import com.dgomezt.proyectoevaluacion.data.response.ResponseOf
-import com.dgomezt.proyectoevaluacion.data.team.ResponseTeam
 import com.dgomezt.proyectoevaluacion.recycleview.adapters.PlayerAdapter
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -43,9 +39,9 @@ class PlayerDetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player_details)
 
-        var team = intent.getStringExtra(TEAM_KEY)
+        val team = intent.getStringExtra(TEAM_KEY)
 
-        var okHttpClient = OkHttpClient.Builder().apply {
+        val okHttpClient = OkHttpClient.Builder().apply {
             addInterceptor(
                 Interceptor { chain ->
                     val builder = chain.request().newBuilder()
@@ -68,15 +64,15 @@ class PlayerDetailsActivity : AppCompatActivity() {
         _service = retrofit.create(FootballService::class.java)
 
 
-        var recyclerView = findViewById<RecyclerView>(R.id.players_recycler_view)
-        var layoutManager = LinearLayoutManager(this)
+        val recyclerView = findViewById<RecyclerView>(R.id.players_recycler_view)
+        val layoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
 
         recyclerView.addOnScrollListener(object : OnScrollListener(){
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                val visibleItemCount: Int = layoutManager!!.childCount
-                val totalItemCount: Int = layoutManager!!.itemCount
+                val visibleItemCount: Int = layoutManager.childCount
+                val totalItemCount: Int = layoutManager.itemCount
                 val firstVisibleItemPosition: Int = layoutManager.findFirstVisibleItemPosition()
                 if (moreElements && !isLoading) {
                     if (visibleItemCount + firstVisibleItemPosition >= totalItemCount
@@ -101,14 +97,14 @@ class PlayerDetailsActivity : AppCompatActivity() {
     }
 
     private fun loadPlayers(_team : String) {
-        var call = _service.getPlayersByTeam(MainActivity.LEAGUE,MainActivity.SEASON, _team, page)
+        val call = _service.getPlayersByTeam(MainActivity.LEAGUE,MainActivity.SEASON, _team, page)
         call.enqueue(object : Callback<ResponseOf<ResponsePlayer>> {
             override fun onResponse(
                 call: Call<ResponseOf<ResponsePlayer>>,
                 response: Response<ResponseOf<ResponsePlayer>>
             ) {
                 if (response.isSuccessful){
-                    var responses  = response.body()!!.response
+                    val responses  = response.body()!!.response
                     _responsePlayer.addAll(responses)
                     _playerAdapter.notifyItemRangeInserted(_offset, responses.size)
                     _offset += responses.size
@@ -122,7 +118,7 @@ class PlayerDetailsActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<ResponseOf<ResponsePlayer>>, t: Throwable) {
-                Log.i(MainActivity::class.java.name, t.localizedMessage)
+                t.localizedMessage?.let { Log.i(MainActivity::class.java.name, it) }
             }
         })
     }

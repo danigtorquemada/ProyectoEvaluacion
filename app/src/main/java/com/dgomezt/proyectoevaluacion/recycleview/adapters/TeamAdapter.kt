@@ -15,7 +15,7 @@ class TeamAdapter(private val _responsesTeam: List<ResponseTeam>, private val _o
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TeamViewHolder {
-        var view = LayoutInflater.from(parent.context).inflate(R.layout.team_element, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.team_element, parent, false)
 
         return TeamViewHolder(view, _onTeamsClickListener)
     }
